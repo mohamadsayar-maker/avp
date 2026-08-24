@@ -216,6 +216,7 @@
     const CHARACTER_HEIGHT = 2.775;
     const CHARACTER_Y = 1.39;
 
+    const characterGeometry = new THREE.PlaneGeometry(CHARACTER_WIDTH, CHARACTER_HEIGHT);
     const portraitMaterial = new THREE.MeshStandardMaterial({
       map: portraitTexture,
       transparent: true,
@@ -228,34 +229,16 @@
       emissiveIntensity: 0.12
     });
 
-    const glowMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.055,
-      side: THREE.DoubleSide,
-      depthWrite: false
-    });
-
     for (let i = 0; i < PANEL_COUNT; i++) {
       const angle = (i / PANEL_COUNT) * Math.PI * 2;
       const x = Math.sin(angle) * RADIUS;
       const z = -Math.cos(angle) * RADIUS;
 
-      const portrait = new THREE.Mesh(
-        new THREE.PlaneGeometry(CHARACTER_WIDTH, CHARACTER_HEIGHT),
-        portraitMaterial.clone()
-      );
+      const portrait = new THREE.Mesh(characterGeometry, portraitMaterial);
+      portrait.name = `character-${i + 1}`;
       portrait.position.set(x, CHARACTER_Y, z);
       portrait.lookAt(0, CHARACTER_Y, 0);
       characterGroup.add(portrait);
-
-      const glow = new THREE.Mesh(
-        new THREE.PlaneGeometry(CHARACTER_WIDTH * 1.15, CHARACTER_HEIGHT * 1.15),
-        glowMaterial.clone()
-      );
-      glow.position.copy(portrait.position);
-      glow.quaternion.copy(portrait.quaternion);
-      characterGroup.add(glow);
 
       const spot = new THREE.SpotLight(0xffffff, 1.9, 7.5, Math.PI / 6, 0.65, 2);
       spot.position.set(x, 4.7, z + 0.001);
